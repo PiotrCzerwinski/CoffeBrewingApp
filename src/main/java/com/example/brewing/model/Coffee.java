@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Coffee extends BaseEntity{
 
-    private String origin;
     private String roaster;
+    private String origin;
     private Integer roastLevel;
-    private LocalDateTime roastDate;
+    private LocalDate roastDate;
 }

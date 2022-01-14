@@ -51,11 +51,14 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
     HorizontalLayout grindersButtonHL;
     VerticalLayout recipiesVL;
     VerticalLayout coffeeVL;
+    HorizontalLayout coffeeButtonHL;
 
     Button addBrewerButton = new Button("Add");
     Button deleteBrewerButton = new Button("Delete");
     Button addGrinderButton = new Button("Add");
     Button deleteGrinderButton = new Button("Delete");
+    Button addCoffeeButton = new Button("Add");
+    Button deleteCoffeeButton = new Button("Delete");
 
     @PostConstruct
     public void init(){
@@ -103,7 +106,12 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
         coffeeVL = new VerticalLayout();
         coffeeGrid.setItems(coffeeRepository.findAll());
         coffeeGrid.setColumns("roaster","origin","roastLevel","roastDate");
-        coffeeVL.add(coffeeLabel,coffeeGrid);
+        coffeeButtonHL = new HorizontalLayout();
+        addCoffeeButton.addClickListener(event -> UI.getCurrent().navigate("coffee-form"));
+        deleteCoffeeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
+        deleteCoffeeButton.addClickListener(click -> deleteCoffee());
+        coffeeButtonHL.add(addCoffeeButton,deleteCoffeeButton);
+        coffeeVL.add(coffeeLabel,coffeeGrid,coffeeButtonHL);
     }
 
     @Override
@@ -128,6 +136,13 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
                 .ifPresent(item -> {
                     grinderRepository.deleteById(item.getId());
                     grinderGrid.setItems(grinderRepository.findAll());
+                });
+    }
+    public void deleteCoffee(){
+        grinderGrid.getSelectionModel().getFirstSelectedItem()
+                .ifPresent(item -> {
+                    coffeeRepository.deleteById(item.getId());
+                    coffeeGrid.setItems(coffeeRepository.findAll());
                 });
     }
 }

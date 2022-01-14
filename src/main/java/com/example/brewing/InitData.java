@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,8 @@ public class InitData {
         Recipe r2 = new Recipe(aeropress,"Aeropress recipe");
         recipeRepository.saveAll(List.of(r1,r2));
 
-        Coffee boyo = new Coffee("Kamerun","Kahawa",3, LocalDateTime.now().minusDays(14));
-        Coffee santos = new Coffee("Brasil","Blue Orca",4, LocalDateTime.now().minusDays(12));
+        Coffee boyo = new Coffee("Kamerun","Kahawa",3, LocalDate.now().minusDays(14));
+        Coffee santos = new Coffee("Brasil","Blue Orca",4, LocalDate.now().minusDays(12));
         coffeeRepository.saveAll(List.of(boyo,santos));
     }
 }
