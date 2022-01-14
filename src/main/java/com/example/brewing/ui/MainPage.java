@@ -48,11 +48,14 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
     VerticalLayout brewersVL;
     HorizontalLayout brewersButtonHL;
     VerticalLayout grindersVL;
+    HorizontalLayout grindersButtonHL;
     VerticalLayout recipiesVL;
     VerticalLayout coffeeVL;
 
     Button addBrewerButton = new Button("Add");
     Button deleteBrewerButton = new Button("Delete");
+    Button addGrinderButton = new Button("Add");
+    Button deleteGrinderButton = new Button("Delete");
 
     @PostConstruct
     public void init(){
@@ -83,7 +86,12 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
         grindersVL = new VerticalLayout();
         grinderGrid.setItems(grinderRepository.findAll());
         grinderGrid.setColumns("manufacturer", "model", "grinderType");
-        grindersVL.add(grindersLabel,grinderGrid);
+        grindersButtonHL = new HorizontalLayout();
+        addGrinderButton.addClickListener(event -> UI.getCurrent().navigate("grinder-form"));
+        deleteGrinderButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
+        deleteGrinderButton.addClickListener(click -> deleteGrinder());
+        grindersButtonHL.add(addGrinderButton,deleteGrinderButton);
+        grindersVL.add(grindersLabel,grinderGrid,grindersButtonHL);
     }
     public void recipiesSetup(){
         recipiesVL = new VerticalLayout();
@@ -113,6 +121,13 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
                     brewerRepository.deleteById(item.getId());
                     brewerGrid.setItems(brewerRepository.findAll());
                     recipeGrid.setItems(recipeRepository.findAll());
+                });
+    }
+    public void deleteGrinder(){
+        grinderGrid.getSelectionModel().getFirstSelectedItem()
+                .ifPresent(item -> {
+                    grinderRepository.deleteById(item.getId());
+                    grinderGrid.setItems(grinderRepository.findAll());
                 });
     }
 }
