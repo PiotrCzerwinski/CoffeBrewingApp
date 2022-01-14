@@ -11,10 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Brewer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Brewer extends BaseEntity{
     private BrewerType brewerType;
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Recipe> recipeList;

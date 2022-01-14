@@ -13,10 +13,8 @@ import javax.persistence.Id;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Grinder {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Grinder extends BaseEntity{
+
     private String manufacturer;
     private String model;
     private GrinderType grinderType;

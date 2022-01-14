@@ -14,10 +14,8 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Coffee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Coffee extends BaseEntity{
+
     private String origin;
     private String roaster;
     private Integer roastLevel;

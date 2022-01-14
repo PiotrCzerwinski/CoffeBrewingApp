@@ -1,15 +1,17 @@
-package com.example.brewing;
+package com.example.brewing.ui;
 
 import com.example.brewing.model.*;
 import com.example.brewing.repositories.BrewerRepository;
 import com.example.brewing.repositories.CoffeeRepository;
 import com.example.brewing.repositories.GrinderRepository;
 import com.example.brewing.repositories.RecipeRepository;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -19,7 +21,7 @@ import javax.annotation.PostConstruct;
 @UIScope
 @Route("")
 @Theme(variant = Lumo.DARK)
-public class MainPage extends VerticalLayout {
+public class MainPage extends VerticalLayout implements AfterNavigationObserver, BeforeEnterListener {
     @Autowired
     RecipeRepository recipeRepository;
     @Autowired
@@ -47,6 +49,8 @@ public class MainPage extends VerticalLayout {
     VerticalLayout recipiesVL;
     VerticalLayout coffeeVL;
 
+    Button addBrewerButton = new Button("Add");
+
     @PostConstruct
     public void init(){
         brewersSetup();
@@ -63,7 +67,8 @@ public class MainPage extends VerticalLayout {
         brewersVL= new VerticalLayout();
         brewerGrid.setItems(brewerRepository.findAll());
         brewerGrid.setColumns("name","brewerType");
-        brewersVL.add(brewersLabel,brewerGrid);
+        addBrewerButton.addClickListener(event -> UI.getCurrent().navigate("brewer-form"));
+        brewersVL.add(brewersLabel,brewerGrid,addBrewerButton);
     }
     public void grindersSetup(){
         grindersVL = new VerticalLayout();
@@ -82,5 +87,21 @@ public class MainPage extends VerticalLayout {
         coffeeGrid.setItems(coffeeRepository.findAll());
         coffeeGrid.setColumns("roaster","origin","roastLevel","roastDate");
         coffeeVL.add(coffeeLabel,coffeeGrid);
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+        brewerGrid.setItems(brewerRepository.findAll());
+        recipeGrid.setItems(recipeRepository.findAll());
+        grinderGrid.setItems(grinderRepository.findAll());
+        coffeeGrid.setItems(coffeeRepository.findAll());
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        brewerGrid.setItems(brewerRepository.findAll());
+        recipeGrid.setItems(recipeRepository.findAll());
+        grinderGrid.setItems(grinderRepository.findAll());
+        coffeeGrid.setItems(coffeeRepository.findAll());
     }
 }

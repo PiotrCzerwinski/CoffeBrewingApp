@@ -10,10 +10,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Recipe {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Recipe extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "brewer_id", nullable = false)
     private Brewer brewer;
