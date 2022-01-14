@@ -7,6 +7,7 @@ import com.example.brewing.repositories.GrinderRepository;
 import com.example.brewing.repositories.RecipeRepository;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -21,7 +22,7 @@ import javax.annotation.PostConstruct;
 @UIScope
 @Route("")
 @Theme(variant = Lumo.DARK)
-public class MainPage extends VerticalLayout implements AfterNavigationObserver, BeforeEnterListener {
+public class MainPage extends VerticalLayout implements BeforeEnterListener {
     @Autowired
     RecipeRepository recipeRepository;
     @Autowired
@@ -45,11 +46,13 @@ public class MainPage extends VerticalLayout implements AfterNavigationObserver,
     Label coffeeLabel = new Label("Your coffee");
 
     VerticalLayout brewersVL;
+    HorizontalLayout brewersButtonHL;
     VerticalLayout grindersVL;
     VerticalLayout recipiesVL;
     VerticalLayout coffeeVL;
 
     Button addBrewerButton = new Button("Add");
+    Button deleteBrewerButton = new Button("Delete");
 
     @PostConstruct
     public void init(){
@@ -65,10 +68,16 @@ public class MainPage extends VerticalLayout implements AfterNavigationObserver,
     }
     public void brewersSetup(){
         brewersVL= new VerticalLayout();
+        brewersButtonHL = new HorizontalLayout();
+
         brewerGrid.setItems(brewerRepository.findAll());
         brewerGrid.setColumns("name","brewerType");
         addBrewerButton.addClickListener(event -> UI.getCurrent().navigate("brewer-form"));
-        brewersVL.add(brewersLabel,brewerGrid,addBrewerButton);
+
+        deleteBrewerButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
+        deleteBrewerButton.addClickListener(click -> deleteBrewer());
+        brewersButtonHL.add(addBrewerButton,deleteBrewerButton);
+        brewersVL.add(brewersLabel,brewerGrid,brewersButtonHL);
     }
     public void grindersSetup(){
         grindersVL = new VerticalLayout();
@@ -90,18 +99,20 @@ public class MainPage extends VerticalLayout implements AfterNavigationObserver,
     }
 
     @Override
-    public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         brewerGrid.setItems(brewerRepository.findAll());
         recipeGrid.setItems(recipeRepository.findAll());
         grinderGrid.setItems(grinderRepository.findAll());
         coffeeGrid.setItems(coffeeRepository.findAll());
     }
 
-    @Override
-    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
-        brewerGrid.setItems(brewerRepository.findAll());
-        recipeGrid.setItems(recipeRepository.findAll());
-        grinderGrid.setItems(grinderRepository.findAll());
-        coffeeGrid.setItems(coffeeRepository.findAll());
+    public void deleteBrewer(){
+        brewerGrid.getSelectionModel().getFirstSelectedItem()
+                .ifPresent(item -> {
+                    recipeRepository.deleteAll(item.getRecipeList());
+                    brewerRepository.deleteById(item.getId());
+                    brewerGrid.setItems(brewerRepository.findAll());
+                    recipeGrid.setItems(recipeRepository.findAll());
+                });
     }
 }
