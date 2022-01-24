@@ -1,16 +1,12 @@
 package com.example.brewing.ui;
 
-import com.example.brewing.model.Brewer;
-import com.example.brewing.model.BrewerType;
 import com.example.brewing.model.User;
-import com.example.brewing.repositories.BrewerRepository;
 import com.example.brewing.repositories.UserRepository;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
@@ -23,41 +19,44 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Optional;
 
-@Route("login-view")
+@Route("registration-form")
 @UIScope
 @Theme(variant = Lumo.DARK)
-public class LoginView extends VerticalLayout {
+public class RegistrationForm extends VerticalLayout {
     @Autowired
     UserRepository userRepository;
 
     private HorizontalLayout buttonsHL = new HorizontalLayout();
     private TextField loginTF = new TextField("Login");
     private PasswordField passwordPF = new PasswordField("Password");
-    private Button loginButton = new Button("Log in");
+    private PasswordField repeatedPasswordPF = new PasswordField("Repeat password");
     private Button registerButton = new Button("Register");
+    private Button backButton = new Button("Back");
     @PostConstruct
     public void init(){
         setAlignItems(Alignment.CENTER);
-        loginButton.addClickListener(buttonClickEvent -> {
-            if(!loginTF.isEmpty() && !passwordPF.isEmpty()) {
-                Optional<User> optionalUser = userRepository.findByLoginAndPassword(loginTF.getValue(),passwordPF.getValue());
-                if(optionalUser.isPresent()) {
-                    UI.getCurrent().navigate("");
-                    loginTF.clear();
-                    passwordPF.clear();
-                } else {
-                    Notification.show("There is no such user");
-                }
+        registerButton.addClickListener(buttonClickEvent -> {
+            if(userRepository.findByLogin(loginTF.getValue()).isEmpty()) {
+                if(passwordPF.getValue().equals(repeatedPasswordPF.getValue())) {
+                    User user = new User(loginTF.getValue(), passwordPF.getValue(),
+                            new ArrayList<>(), new ArrayList<>(),
+                            new ArrayList<>(), new ArrayList<>());
+                    userRepository.save(user);
+                    UI.getCurrent().navigate("user-page");
+                    }else {
+                    Notification.show("Passwords dont match");
+                    }
             } else {
-                Notification.show("Fields cannot be empty");
+                Notification.show("Login taken");
             }
+
         });
 
-        registerButton.addClickListener(click ->{
-            UI.getCurrent().navigate("registration-form");
+        backButton.addClickListener(click ->{
+            UI.getCurrent().navigate("login-view");
         });
 
-        buttonsHL.add(loginButton,registerButton);
-        add(loginTF,passwordPF,buttonsHL);
+        buttonsHL.add(registerButton,backButton);
+        add(loginTF,passwordPF,repeatedPasswordPF,buttonsHL);
     }
 }
