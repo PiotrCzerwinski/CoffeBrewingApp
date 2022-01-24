@@ -139,7 +139,7 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
                 });
     }
     public void deleteCoffee(){
-        grinderGrid.getSelectionModel().getFirstSelectedItem()
+        coffeeGrid.getSelectionModel().getFirstSelectedItem()
                 .ifPresent(item -> {
                     coffeeRepository.deleteById(item.getId());
                     coffeeGrid.setItems(coffeeRepository.findAll());
