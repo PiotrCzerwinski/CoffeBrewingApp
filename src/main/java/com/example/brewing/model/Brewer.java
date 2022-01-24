@@ -13,8 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Brewer extends BaseEntity{
     private BrewerType brewerType;
-    @OneToMany(mappedBy = "brewer",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    private List<Recipe> recipeList;
     private String name;
 
 }

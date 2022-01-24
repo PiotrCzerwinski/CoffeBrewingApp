@@ -39,7 +39,7 @@ public class BrewerForm extends VerticalLayout {
         brewerNameTF.setLabel("brewer name");
         saveButton.addClickListener(buttonClickEvent -> {
             if(!brewerNameTF.isEmpty() && !brewerTypeSelect.isEmpty()) {
-                Brewer brewer = new Brewer(brewerTypeSelect.getValue(),new ArrayList<>(),brewerNameTF.getValue());
+                Brewer brewer = new Brewer(brewerTypeSelect.getValue(),brewerNameTF.getValue());
                 brewerRepository.save(brewer);
                 brewerNameTF.clear();
                 brewerTypeSelect.clear();

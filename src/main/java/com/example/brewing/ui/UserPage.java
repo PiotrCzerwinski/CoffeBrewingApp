@@ -1,10 +1,10 @@
 package com.example.brewing.ui;
 
-import com.example.brewing.model.*;
-import com.example.brewing.repositories.BrewerRepository;
-import com.example.brewing.repositories.CoffeeRepository;
-import com.example.brewing.repositories.GrinderRepository;
-import com.example.brewing.repositories.RecipeRepository;
+import com.example.brewing.model.Brewer;
+import com.example.brewing.model.Coffee;
+import com.example.brewing.model.Grinder;
+import com.example.brewing.model.Recipe;
+import com.example.brewing.repositories.*;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -12,17 +12,21 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterListener;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
+
 @UIScope
-@Route("")
+@Route("user-page")
 @Theme(variant = Lumo.DARK)
-public class MainPage extends VerticalLayout implements BeforeEnterListener {
+public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ {
     @Autowired
     RecipeRepository recipeRepository;
     @Autowired
@@ -31,6 +35,8 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
     GrinderRepository grinderRepository;
     @Autowired
     CoffeeRepository coffeeRepository;
+    @Autowired
+    UserRepository userRepository;
 
     Grid<Brewer> brewerGrid = new Grid<>(Brewer.class);
     Grid<Recipe> recipeGrid = new Grid<>(Recipe.class);
@@ -72,11 +78,12 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
         secondHl.setWidthFull();
         add(firstHl, secondHl);
     }
+    @Transactional
     public void brewersSetup(){
         brewersVL= new VerticalLayout();
         brewersButtonHL = new HorizontalLayout();
 
-        brewerGrid.setItems(brewerRepository.findAll());
+        brewerGrid.setItems(userRepository.findByLoginAndPassword("user","password").get().getBrewerList());
         brewerGrid.setColumns("name","brewerType");
         addBrewerButton.addClickListener(event -> UI.getCurrent().navigate("brewer-form"));
 
@@ -85,9 +92,10 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
         brewersButtonHL.add(addBrewerButton,deleteBrewerButton);
         brewersVL.add(brewersLabel,brewerGrid,brewersButtonHL);
     }
+    @Transactional
     public void grindersSetup(){
         grindersVL = new VerticalLayout();
-        grinderGrid.setItems(grinderRepository.findAll());
+        grinderGrid.setItems(userRepository.findByLoginAndPassword("user","password").get().getGrinderList());
         grinderGrid.setColumns("manufacturer", "model", "grinderType");
         grindersButtonHL = new HorizontalLayout();
         addGrinderButton.addClickListener(event -> UI.getCurrent().navigate("grinder-form"));
@@ -96,15 +104,16 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
         grindersButtonHL.add(addGrinderButton,deleteGrinderButton);
         grindersVL.add(grindersLabel,grinderGrid,grindersButtonHL);
     }
+    @Transactional
     public void recipiesSetup(){
         recipiesVL = new VerticalLayout();
-        recipeGrid.setItems(recipeRepository.findAll());
+        recipeGrid.setItems(userRepository.findByLoginAndPassword("user","password").get().getRecipeList());
         recipeGrid.setColumns("brewer.name","recipeText");
         recipiesVL.add(recipiesLabel,recipeGrid);
-    }
+    }@Transactional
     public void coffeeSetup(){
         coffeeVL = new VerticalLayout();
-        coffeeGrid.setItems(coffeeRepository.findAll());
+        coffeeGrid.setItems(userRepository.findByLoginAndPassword("user","password").get().getCoffeeList());
         coffeeGrid.setColumns("roaster","origin","roastLevel","roastDate");
         coffeeButtonHL = new HorizontalLayout();
         addCoffeeButton.addClickListener(event -> UI.getCurrent().navigate("coffee-form"));
@@ -114,13 +123,13 @@ public class MainPage extends VerticalLayout implements BeforeEnterListener {
         coffeeVL.add(coffeeLabel,coffeeGrid,coffeeButtonHL);
     }
 
-    @Override
+    /*@Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         brewerGrid.setItems(brewerRepository.findAll());
         recipeGrid.setItems(recipeRepository.findAll());
         grinderGrid.setItems(grinderRepository.findAll());
         coffeeGrid.setItems(coffeeRepository.findAll());
-    }
+    }*/
 
     public void deleteBrewer(){
         brewerGrid.getSelectionModel().getFirstSelectedItem()

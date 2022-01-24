@@ -12,7 +12,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Recipe extends BaseEntity{
     @ManyToOne
-    @JoinColumn(name = "brewer_id", nullable = false)
     private Brewer brewer;
     private String recipeText;
 
