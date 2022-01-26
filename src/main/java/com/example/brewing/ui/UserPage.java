@@ -1,9 +1,6 @@
 package com.example.brewing.ui;
 
-import com.example.brewing.model.Brewer;
-import com.example.brewing.model.Coffee;
-import com.example.brewing.model.Grinder;
-import com.example.brewing.model.Recipe;
+import com.example.brewing.model.*;
 import com.example.brewing.repositories.*;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -12,8 +9,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterListener;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
@@ -37,6 +32,12 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     CoffeeRepository coffeeRepository;
     @Autowired
     UserRepository userRepository;
+
+    User activeUser;
+
+    public UserPage(){
+        this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
+    }
 
     Grid<Brewer> brewerGrid = new Grid<>(Brewer.class);
     Grid<Recipe> recipeGrid = new Grid<>(Recipe.class);
@@ -83,7 +84,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         brewersVL= new VerticalLayout();
         brewersButtonHL = new HorizontalLayout();
 
-        brewerGrid.setItems(userRepository.findByLoginAndPassword("user","password").get().getBrewerList());
+        brewerGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getBrewerList());
         brewerGrid.setColumns("name","brewerType");
         addBrewerButton.addClickListener(event -> UI.getCurrent().navigate("brewer-form"));
 
@@ -95,7 +96,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     @Transactional
     public void grindersSetup(){
         grindersVL = new VerticalLayout();
-        grinderGrid.setItems(userRepository.findByLoginAndPassword("user","password").get().getGrinderList());
+        grinderGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getGrinderList());
         grinderGrid.setColumns("manufacturer", "model", "grinderType");
         grindersButtonHL = new HorizontalLayout();
         addGrinderButton.addClickListener(event -> UI.getCurrent().navigate("grinder-form"));
@@ -107,13 +108,13 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     @Transactional
     public void recipiesSetup(){
         recipiesVL = new VerticalLayout();
-        recipeGrid.setItems(userRepository.findByLoginAndPassword("user","password").get().getRecipeList());
+        recipeGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getRecipeList());
         recipeGrid.setColumns("brewer.name","recipeText");
         recipiesVL.add(recipiesLabel,recipeGrid);
     }@Transactional
     public void coffeeSetup(){
         coffeeVL = new VerticalLayout();
-        coffeeGrid.setItems(userRepository.findByLoginAndPassword("user","password").get().getCoffeeList());
+        coffeeGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getCoffeeList());
         coffeeGrid.setColumns("roaster","origin","roastLevel","roastDate");
         coffeeButtonHL = new HorizontalLayout();
         addCoffeeButton.addClickListener(event -> UI.getCurrent().navigate("coffee-form"));

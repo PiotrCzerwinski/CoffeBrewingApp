@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Route("registration-form")
 @UIScope
@@ -42,7 +41,7 @@ public class RegistrationForm extends VerticalLayout {
                             new ArrayList<>(), new ArrayList<>(),
                             new ArrayList<>(), new ArrayList<>());
                     userRepository.save(user);
-                    UI.getCurrent().navigate("user-page");
+                    UI.getCurrent().navigate("login-view");
                     }else {
                     Notification.show("Passwords dont match");
                     }
