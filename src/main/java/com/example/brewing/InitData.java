@@ -24,6 +24,8 @@ public class InitData {
     CoffeeRepository coffeeRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ReviewRepository reviewRepository;
 
 
     @PostConstruct
@@ -33,7 +35,12 @@ public class InitData {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>());
-        userRepository.save(user1);
+        User user2 = new User("user2","password2",
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>());
+        userRepository.saveAll(List.of(user1,user2));
 
         Grinder xeoleo = new Grinder("Xeoleo","Xeoleo handgrinder", GrinderType.HAND_GRINDER,user1);
         Grinder niche = new Grinder("Niche","Niche Zero", GrinderType.ELECTRIC_GRINDER, user1);
@@ -46,6 +53,11 @@ public class InitData {
         Recipe r1 = new Recipe("V60 recipe",v60,"v60 recipe text", new ArrayList<>(), user1);
         Recipe r2 = new Recipe("Aeropress recipe",aeropress,"aeropress recipe text",new ArrayList<>(), user1);
         recipeRepository.saveAll(List.of(r1,r2));
+
+        Review review = new Review(r1,5L,"Really enjoyed coffee that recipe produced",user2);
+        reviewRepository.save(review);
+        r1.addReview(review);
+        recipeRepository.save(r1);
 
         Coffee boyo = new Coffee("Kamerun","Kahawa",3, LocalDate.now().minusDays(14),user1);
         Coffee santos = new Coffee("Brasil","Blue Orca",4, LocalDate.now().minusDays(12),user1);

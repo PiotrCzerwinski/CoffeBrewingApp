@@ -7,6 +7,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @UIScope
 @Route("user-page")
@@ -34,7 +36,6 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     UserRepository userRepository;
 
     User activeUser;
-
     public UserPage(){
         this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
     }
@@ -120,6 +121,10 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         addRecipeButton.addClickListener(event -> UI.getCurrent().navigate("recipe-form"));
         deleteRecipeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
         deleteRecipeButton.addClickListener(click -> deleteRecipe());
+        recipeGrid.addItemDoubleClickListener(click ->{
+            UI.getCurrent().getSession().setAttribute("recipe", click.getItem());
+            UI.getCurrent().navigate("recipe-view");
+        });
 
         recipesButtonHL.add(addRecipeButton,deleteRecipeButton);
         recipesVL.add(recipesLabel,recipeGrid,recipesButtonHL);

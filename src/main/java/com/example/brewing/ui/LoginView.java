@@ -2,6 +2,7 @@ package com.example.brewing.ui;
 
 import com.example.brewing.model.User;
 import com.example.brewing.repositories.UserRepository;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
@@ -32,6 +33,7 @@ public class LoginView extends VerticalLayout {
     @PostConstruct
     public void init(){
         setAlignItems(Alignment.CENTER);
+        loginButton.addClickShortcut(Key.ENTER);
         loginButton.addClickListener(buttonClickEvent -> {
             if(!loginTF.isEmpty() && !passwordPF.isEmpty()) {
                 Optional<User> optionalUser = userRepository.findByLoginAndPassword(loginTF.getValue(),passwordPF.getValue());

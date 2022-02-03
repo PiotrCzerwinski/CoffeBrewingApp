@@ -16,10 +16,14 @@ public class Recipe extends BaseEntity{
     @ManyToOne
     private Brewer brewer;
     private String recipeText;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Review> reviews;
     @ManyToOne
     private User recipeAuthor;
+
+    public void addReview(Review review){
+        this.reviews.add(review);
+    }
 
     @Override
     public String toString() {
