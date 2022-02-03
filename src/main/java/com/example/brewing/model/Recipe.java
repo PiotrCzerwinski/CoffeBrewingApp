@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Recipe extends BaseEntity{
+    private String recipeName;
     @ManyToOne
     private Brewer brewer;
     private String recipeText;
@@ -20,4 +21,12 @@ public class Recipe extends BaseEntity{
     @ManyToOne
     private User recipeAuthor;
 
+    @Override
+    public String toString() {
+        return "Recipe [id= "+this.getId()+
+                ", brewer= "+this.getBrewer().getName()+
+                ", recipeName= "+this.getRecipeName()+
+                "]";
+
+    }
 }

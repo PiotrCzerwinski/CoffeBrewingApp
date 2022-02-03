@@ -20,4 +20,13 @@ public class Review extends BaseEntity{
     @ManyToOne
     private User author;
 
+    @Override
+    public String toString() {
+        return "Review [id= "+this.getId()+
+                ", recipeName= "+this.getRecipe().getRecipeName()+
+                ", rating= "+this.getRating()+
+                ", comment= "+this.getComment()+
+                "]";
+
+    }
 }

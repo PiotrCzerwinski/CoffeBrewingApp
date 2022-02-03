@@ -17,4 +17,12 @@ public class Brewer extends BaseEntity{
     @ManyToOne
     private User brewerOwner;
 
+    @Override
+    public String toString() {
+        return "Brewer [id= "+this.getId()+
+                ", brewerType= "+this.getBrewerType().toString()+
+                ", name= "+this.getName()+
+                "]";
+
+    }
 }

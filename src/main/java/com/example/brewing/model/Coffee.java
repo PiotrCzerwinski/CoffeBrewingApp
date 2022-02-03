@@ -19,4 +19,15 @@ public class Coffee extends BaseEntity{
     private LocalDate roastDate;
     @ManyToOne
     private User coffeeOwner;
+
+    @Override
+    public String toString() {
+        return "Coffee [id= "+this.getId()+
+                ", roaster= "+this.getRoaster()+
+                ", origin= "+this.getOrigin()+
+                ", roastLevel= "+this.getRoastLevel()+
+                ", roastDate= "+this.getRoastDate()+
+                "]";
+
+    }
 }

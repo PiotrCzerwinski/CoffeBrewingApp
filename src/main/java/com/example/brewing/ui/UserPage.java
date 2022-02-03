@@ -48,7 +48,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     HorizontalLayout secondHl = new HorizontalLayout();
 
     Label brewersLabel = new Label("Your brewers");
-    Label recipiesLabel = new Label("Your recipies");
+    Label recipesLabel = new Label("Your recipies");
     Label grindersLabel = new Label("Your grinders");
     Label coffeeLabel = new Label("Your coffee");
 
@@ -56,7 +56,8 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     HorizontalLayout brewersButtonHL;
     VerticalLayout grindersVL;
     HorizontalLayout grindersButtonHL;
-    VerticalLayout recipiesVL;
+    VerticalLayout recipesVL;
+    HorizontalLayout recipesButtonHL;
     VerticalLayout coffeeVL;
     HorizontalLayout coffeeButtonHL;
 
@@ -66,6 +67,8 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     Button deleteGrinderButton = new Button("Delete");
     Button addCoffeeButton = new Button("Add");
     Button deleteCoffeeButton = new Button("Delete");
+    Button addRecipeButton = new Button("Add");
+    Button deleteRecipeButton = new Button("Delete");
 
     @PostConstruct
     public void init(){
@@ -75,7 +78,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         coffeeSetup();
         firstHl.add(brewersVL,grindersVL);
         firstHl.setWidthFull();
-        secondHl.add(coffeeVL,recipiesVL);
+        secondHl.add(coffeeVL,recipesVL);
         secondHl.setWidthFull();
         add(firstHl, secondHl);
     }
@@ -99,19 +102,30 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         grinderGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getGrinderList());
         grinderGrid.setColumns("manufacturer", "model", "grinderType");
         grindersButtonHL = new HorizontalLayout();
+
         addGrinderButton.addClickListener(event -> UI.getCurrent().navigate("grinder-form"));
         deleteGrinderButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
         deleteGrinderButton.addClickListener(click -> deleteGrinder());
+
         grindersButtonHL.add(addGrinderButton,deleteGrinderButton);
         grindersVL.add(grindersLabel,grinderGrid,grindersButtonHL);
     }
 
     public void recipiesSetup(){
-        recipiesVL = new VerticalLayout();
+        recipesVL = new VerticalLayout();
         recipeGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getRecipeList());
         recipeGrid.setColumns("brewer.name","recipeText");
-        recipiesVL.add(recipiesLabel,recipeGrid);
+        recipesButtonHL = new HorizontalLayout();
+
+        addRecipeButton.addClickListener(event -> UI.getCurrent().navigate("recipe-form"));
+        deleteRecipeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
+        deleteRecipeButton.addClickListener(click -> deleteRecipe());
+
+        recipesButtonHL.add(addRecipeButton,deleteRecipeButton);
+        recipesVL.add(recipesLabel,recipeGrid,recipesButtonHL);
     }
+
+
 
     public void coffeeSetup(){
         coffeeVL = new VerticalLayout();
@@ -137,21 +151,28 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         brewerGrid.getSelectionModel().getFirstSelectedItem()
                 .ifPresent(item -> {
                     brewerRepository.deleteById(item.getId());
-                    brewerGrid.setItems(brewerRepository.findAll());
+                    brewerGrid.setItems(activeUser.getBrewerList());
                 });
     }
     public void deleteGrinder(){
         grinderGrid.getSelectionModel().getFirstSelectedItem()
                 .ifPresent(item -> {
                     grinderRepository.deleteById(item.getId());
-                    grinderGrid.setItems(grinderRepository.findAll());
+                    grinderGrid.setItems(activeUser.getGrinderList());
                 });
     }
     public void deleteCoffee(){
         coffeeGrid.getSelectionModel().getFirstSelectedItem()
                 .ifPresent(item -> {
                     coffeeRepository.deleteById(item.getId());
-                    coffeeGrid.setItems(coffeeRepository.findAll());
+                    coffeeGrid.setItems(activeUser.getCoffeeList());
+                });
+    }
+    private void deleteRecipe() {
+        recipeGrid.getSelectionModel().getFirstSelectedItem()
+                .ifPresent(item -> {
+                    recipeRepository.deleteById(item.getId());
+                    recipeGrid.setItems(activeUser.getRecipeList());
                 });
     }
 }

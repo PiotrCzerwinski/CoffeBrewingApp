@@ -43,8 +43,8 @@ public class InitData {
         Brewer v60 = new Brewer(BrewerType.POUR_OVER,"Hario V60",user1);
         brewerRepository.saveAll(List.of(aeropress,v60));
 
-        Recipe r1 = new Recipe(v60,"V60 recipe", new ArrayList<>(), user1);
-        Recipe r2 = new Recipe(aeropress,"Aeropress recipe",new ArrayList<>(), user1);
+        Recipe r1 = new Recipe("V60 recipe",v60,"v60 recipe text", new ArrayList<>(), user1);
+        Recipe r2 = new Recipe("Aeropress recipe",aeropress,"aeropress recipe text",new ArrayList<>(), user1);
         recipeRepository.saveAll(List.of(r1,r2));
 
         Coffee boyo = new Coffee("Kamerun","Kahawa",3, LocalDate.now().minusDays(14),user1);

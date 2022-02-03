@@ -28,4 +28,10 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "coffeeOwner")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Coffee> coffeeList;
+
+    @Override
+    public String toString() {
+        return "User [id= "+this.getId()+", login= "+this.getLogin()+"]";
+
+    }
 }
