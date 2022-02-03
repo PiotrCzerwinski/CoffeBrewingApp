@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 @UIScope
-@Route("")
+@Route("all")
 @Theme(variant = Lumo.DARK)
 public class MainPage extends VerticalLayout implements BeforeEnterListener {
     @Autowired

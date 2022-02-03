@@ -41,7 +41,7 @@ public class RegistrationForm extends VerticalLayout {
                             new ArrayList<>(), new ArrayList<>(),
                             new ArrayList<>(), new ArrayList<>());
                     userRepository.save(user);
-                    UI.getCurrent().navigate("login-view");
+                    UI.getCurrent().navigate("");
                     }else {
                     Notification.show("Passwords dont match");
                     }
@@ -52,7 +52,7 @@ public class RegistrationForm extends VerticalLayout {
         });
 
         backButton.addClickListener(click ->{
-            UI.getCurrent().navigate("login-view");
+            UI.getCurrent().navigate("");
         });
 
         buttonsHL.add(registerButton,backButton);

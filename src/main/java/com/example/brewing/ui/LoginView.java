@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.util.Optional;
 
-@Route("login-view")
+@Route("")
 @UIScope
 @Theme(variant = Lumo.DARK)
 public class LoginView extends VerticalLayout {

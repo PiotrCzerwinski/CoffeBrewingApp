@@ -79,7 +79,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         secondHl.setWidthFull();
         add(firstHl, secondHl);
     }
-    @Transactional
+
     public void brewersSetup(){
         brewersVL= new VerticalLayout();
         brewersButtonHL = new HorizontalLayout();
@@ -93,7 +93,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         brewersButtonHL.add(addBrewerButton,deleteBrewerButton);
         brewersVL.add(brewersLabel,brewerGrid,brewersButtonHL);
     }
-    @Transactional
+
     public void grindersSetup(){
         grindersVL = new VerticalLayout();
         grinderGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getGrinderList());
@@ -105,13 +105,14 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         grindersButtonHL.add(addGrinderButton,deleteGrinderButton);
         grindersVL.add(grindersLabel,grinderGrid,grindersButtonHL);
     }
-    @Transactional
+
     public void recipiesSetup(){
         recipiesVL = new VerticalLayout();
         recipeGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getRecipeList());
         recipeGrid.setColumns("brewer.name","recipeText");
         recipiesVL.add(recipiesLabel,recipeGrid);
-    }@Transactional
+    }
+
     public void coffeeSetup(){
         coffeeVL = new VerticalLayout();
         coffeeGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getCoffeeList());

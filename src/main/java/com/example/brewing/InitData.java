@@ -28,25 +28,29 @@ public class InitData {
 
     @PostConstruct
     public void init(){
+        User user1 = new User("user","password",
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>());
+        userRepository.save(user1);
 
-
-        Grinder xeoleo = new Grinder("Xeoleo","Xeoleo handgrinder", GrinderType.HAND_GRINDER);
-        Grinder niche = new Grinder("Niche","Niche Zero", GrinderType.ELECTRIC_GRINDER);
+        Grinder xeoleo = new Grinder("Xeoleo","Xeoleo handgrinder", GrinderType.HAND_GRINDER,user1);
+        Grinder niche = new Grinder("Niche","Niche Zero", GrinderType.ELECTRIC_GRINDER, user1);
         grinderRepository.saveAll(List.of(xeoleo,niche));
 
-        Brewer aeropress = new Brewer(BrewerType.AEROPRESS,"Aeropress");
-        Brewer v60 = new Brewer(BrewerType.POUR_OVER,"Hario V60");
+        Brewer aeropress = new Brewer(BrewerType.AEROPRESS,"Aeropress",user1);
+        Brewer v60 = new Brewer(BrewerType.POUR_OVER,"Hario V60",user1);
         brewerRepository.saveAll(List.of(aeropress,v60));
 
-        Recipe r1 = new Recipe(v60,"V60 recipe");
-        Recipe r2 = new Recipe(aeropress,"Aeropress recipe");
+        Recipe r1 = new Recipe(v60,"V60 recipe", new ArrayList<>(), user1);
+        Recipe r2 = new Recipe(aeropress,"Aeropress recipe",new ArrayList<>(), user1);
         recipeRepository.saveAll(List.of(r1,r2));
 
-        Coffee boyo = new Coffee("Kamerun","Kahawa",3, LocalDate.now().minusDays(14));
-        Coffee santos = new Coffee("Brasil","Blue Orca",4, LocalDate.now().minusDays(12));
+        Coffee boyo = new Coffee("Kamerun","Kahawa",3, LocalDate.now().minusDays(14),user1);
+        Coffee santos = new Coffee("Brasil","Blue Orca",4, LocalDate.now().minusDays(12),user1);
         coffeeRepository.saveAll(List.of(boyo,santos));
 
-        User user1 = new User("user","password",List.of(aeropress,v60),List.of(xeoleo,niche), List.of(r1,r2),List.of(boyo,santos));
-        userRepository.save(user1);
+
     }
 }

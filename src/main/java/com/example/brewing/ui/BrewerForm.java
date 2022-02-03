@@ -2,6 +2,7 @@ package com.example.brewing.ui;
 
 import com.example.brewing.model.Brewer;
 import com.example.brewing.model.BrewerType;
+import com.example.brewing.model.User;
 import com.example.brewing.repositories.BrewerRepository;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -26,6 +27,11 @@ import java.util.ArrayList;
 public class BrewerForm extends VerticalLayout {
     @Autowired
     BrewerRepository brewerRepository;
+    User activeUser;
+
+    public BrewerForm(){
+        this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
+    }
 
     private TextField brewerNameTF = new TextField();
     private Select<BrewerType> brewerTypeSelect = new Select<>();
@@ -39,7 +45,7 @@ public class BrewerForm extends VerticalLayout {
         brewerNameTF.setLabel("brewer name");
         saveButton.addClickListener(buttonClickEvent -> {
             if(!brewerNameTF.isEmpty() && !brewerTypeSelect.isEmpty()) {
-                Brewer brewer = new Brewer(brewerTypeSelect.getValue(),brewerNameTF.getValue());
+                Brewer brewer = new Brewer(brewerTypeSelect.getValue(),brewerNameTF.getValue(), activeUser);
                 brewerRepository.save(brewer);
                 brewerNameTF.clear();
                 brewerTypeSelect.clear();
@@ -48,7 +54,7 @@ public class BrewerForm extends VerticalLayout {
 
             }
         });
-        backButton.addClickListener(click -> UI.getCurrent().navigate(""));
+        backButton.addClickListener(click -> UI.getCurrent().navigate("user-page"));
         add(backButton,brewerNameTF,brewerTypeSelect,saveButton);
 
     }

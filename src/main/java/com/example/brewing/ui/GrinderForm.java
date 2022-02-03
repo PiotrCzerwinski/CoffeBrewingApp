@@ -1,9 +1,6 @@
 package com.example.brewing.ui;
 
-import com.example.brewing.model.Brewer;
-import com.example.brewing.model.BrewerType;
-import com.example.brewing.model.Grinder;
-import com.example.brewing.model.GrinderType;
+import com.example.brewing.model.*;
 import com.example.brewing.repositories.BrewerRepository;
 import com.example.brewing.repositories.GrinderRepository;
 import com.vaadin.flow.component.UI;
@@ -27,6 +24,11 @@ import java.util.ArrayList;
 public class GrinderForm extends VerticalLayout {
     @Autowired
     GrinderRepository grinderRepository;
+    User activeUser;
+
+    public GrinderForm(){
+        this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
+    }
 
     private TextField manufacturerTF = new TextField();
     private TextField modelTF = new TextField();
@@ -43,7 +45,7 @@ public class GrinderForm extends VerticalLayout {
 
         saveButton.addClickListener(buttonClickEvent -> {
             if(!manufacturerTF.isEmpty() && !modelTF.isEmpty() && !grinderTypeSelect.isEmpty()) {
-                Grinder grinder = new Grinder(manufacturerTF.getValue(),modelTF.getValue(),grinderTypeSelect.getValue());
+                Grinder grinder = new Grinder(manufacturerTF.getValue(),modelTF.getValue(),grinderTypeSelect.getValue(),activeUser);
                 grinderRepository.save(grinder);
                 manufacturerTF.clear();
                 modelTF.clear();
@@ -53,7 +55,7 @@ public class GrinderForm extends VerticalLayout {
 
             }
         });
-        backButton.addClickListener(click -> UI.getCurrent().navigate(""));
+        backButton.addClickListener(click -> UI.getCurrent().navigate("user-page"));
         add(backButton,manufacturerTF,modelTF,grinderTypeSelect,saveButton);
 
     }

@@ -3,6 +3,7 @@ package com.example.brewing.ui;
 import com.example.brewing.model.Coffee;
 import com.example.brewing.model.Grinder;
 import com.example.brewing.model.GrinderType;
+import com.example.brewing.model.User;
 import com.example.brewing.repositories.CoffeeRepository;
 import com.example.brewing.repositories.GrinderRepository;
 import com.vaadin.flow.component.UI;
@@ -27,6 +28,11 @@ import java.util.stream.IntStream;
 public class CoffeeForm extends VerticalLayout {
     @Autowired
     CoffeeRepository coffeeRepository;
+    User activeUser;
+
+    public CoffeeForm(){
+        this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
+    }
 
     private TextField roasterTF = new TextField("coffee roaster");
     private TextField originTF = new TextField("country of origin");
@@ -34,6 +40,7 @@ public class CoffeeForm extends VerticalLayout {
     private DatePicker roastDate = new DatePicker("roast date");
     private Button saveButton = new Button("Save");
     private Button backButton = new Button("Go back");
+
     @PostConstruct
     public void init(){
         setAlignItems(Alignment.CENTER);
@@ -42,7 +49,7 @@ public class CoffeeForm extends VerticalLayout {
         saveButton.addClickListener(buttonClickEvent -> {
             if(!roasterTF.isEmpty() && !originTF.isEmpty()
                     && !roastLevelSelect.isEmpty() && !roastDate.isEmpty()) {
-                Coffee coffee = new Coffee(roasterTF.getValue(),originTF.getValue(),roastLevelSelect.getValue(),roastDate.getValue());
+                Coffee coffee = new Coffee(roasterTF.getValue(),originTF.getValue(),roastLevelSelect.getValue(),roastDate.getValue(),activeUser);
                 coffeeRepository.save(coffee);
                 roasterTF.clear();
                 originTF.clear();
@@ -53,7 +60,7 @@ public class CoffeeForm extends VerticalLayout {
 
             }
         });
-        backButton.addClickListener(click -> UI.getCurrent().navigate(""));
+        backButton.addClickListener(click -> UI.getCurrent().navigate("user-page"));
         add(backButton,roasterTF,originTF,roastLevelSelect,roastDate,saveButton);
 
     }

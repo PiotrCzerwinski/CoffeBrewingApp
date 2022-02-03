@@ -14,5 +14,7 @@ import java.util.List;
 public class Brewer extends BaseEntity{
     private BrewerType brewerType;
     private String name;
+    @ManyToOne
+    private User brewerOwner;
 
 }

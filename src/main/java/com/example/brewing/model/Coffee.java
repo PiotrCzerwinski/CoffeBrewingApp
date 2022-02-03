@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -20,4 +17,6 @@ public class Coffee extends BaseEntity{
     private String origin;
     private Integer roastLevel;
     private LocalDate roastDate;
+    @ManyToOne
+    private User coffeeOwner;
 }
