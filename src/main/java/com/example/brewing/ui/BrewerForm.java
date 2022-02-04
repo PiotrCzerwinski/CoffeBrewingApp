@@ -12,7 +12,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -24,13 +27,13 @@ import java.util.ArrayList;
 @Route("brewer-form")
 @UIScope
 @Theme(variant = Lumo.DARK)
-public class BrewerForm extends VerticalLayout {
+public class BrewerForm extends VerticalLayout implements BeforeEnterObserver {
     @Autowired
     BrewerRepository brewerRepository;
     User activeUser;
 
     public BrewerForm(){
-        this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
+        this.activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
     }
 
     private TextField brewerNameTF = new TextField();
@@ -57,5 +60,10 @@ public class BrewerForm extends VerticalLayout {
         backButton.addClickListener(click -> UI.getCurrent().navigate("user-page"));
         add(backButton,brewerNameTF,brewerTypeSelect,saveButton);
 
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        this.activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
     }
 }

@@ -12,7 +12,10 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -25,7 +28,7 @@ import java.util.List;
 @Route("recipe-view")
 @UIScope
 @Theme(variant = Lumo.DARK)
-public class RecipeView extends VerticalLayout {
+public class RecipeView extends VerticalLayout implements BeforeEnterObserver {
     @Autowired
     RecipeRepository recipeRepository;
     @Autowired
@@ -34,8 +37,8 @@ public class RecipeView extends VerticalLayout {
     Recipe activeRecipe;
 
     public RecipeView(){
-        this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
-        this.activeRecipe = (Recipe) UI.getCurrent().getSession().getAttribute("recipe");
+        this.activeUser =(User) VaadinSession.getCurrent().getSession().getAttribute("user");
+        this.activeRecipe = (Recipe) VaadinSession.getCurrent().getSession().getAttribute("recipe");
     }
 
     private Button backButton = new Button("Go back");
@@ -66,5 +69,10 @@ public class RecipeView extends VerticalLayout {
             Text t = new Text("No reviews for this recipe so far.");
             add(t);
         }
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        this.activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
     }
 }

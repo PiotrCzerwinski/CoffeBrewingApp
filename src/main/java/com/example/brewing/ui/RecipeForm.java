@@ -4,6 +4,7 @@ import com.example.brewing.model.Brewer;
 import com.example.brewing.model.Coffee;
 import com.example.brewing.model.Recipe;
 import com.example.brewing.model.User;
+import com.example.brewing.repositories.BrewerRepository;
 import com.example.brewing.repositories.CoffeeRepository;
 import com.example.brewing.repositories.RecipeRepository;
 import com.vaadin.flow.component.UI;
@@ -14,7 +15,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -27,13 +31,15 @@ import java.util.stream.IntStream;
 @Route("recipe-form")
 @UIScope
 @Theme(variant = Lumo.DARK)
-public class RecipeForm extends VerticalLayout {
+public class RecipeForm extends VerticalLayout implements BeforeEnterObserver {
     @Autowired
     RecipeRepository recipeRepository;
+    @Autowired
+    BrewerRepository brewerRepository;
     User activeUser;
 
     public RecipeForm(){
-        this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
+        activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
     }
 
     private TextField recipeNameTF = new TextField("Recipe name");
@@ -45,7 +51,7 @@ public class RecipeForm extends VerticalLayout {
     @PostConstruct
     public void init(){
         setAlignItems(Alignment.CENTER);
-        brewerSelect.setItems(activeUser.getBrewerList());
+        brewerSelect.setItems(brewerRepository.findAllByBrewerOwner_Id(activeUser.getId()));
         brewerSelect.setLabel("brewer");
         saveButton.addClickListener(buttonClickEvent -> {
             if(!recipeNameTF.isEmpty() && !recipeTA.isEmpty()
@@ -58,11 +64,15 @@ public class RecipeForm extends VerticalLayout {
                 recipeTA.clear();
             } else {
                 Notification.show("Fields cannot be empty");
-
             }
         });
         backButton.addClickListener(click -> UI.getCurrent().navigate("user-page"));
         add(backButton,recipeNameTF,brewerSelect,recipeTA,saveButton);
 
+    }
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
+        brewerSelect.setItems(brewerRepository.findAllByBrewerOwner_Id(activeUser.getId()));
     }
 }

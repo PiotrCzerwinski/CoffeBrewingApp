@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -38,7 +39,7 @@ public class LoginView extends VerticalLayout {
             if(!loginTF.isEmpty() && !passwordPF.isEmpty()) {
                 Optional<User> optionalUser = userRepository.findByLoginAndPassword(loginTF.getValue(),passwordPF.getValue());
                 if(optionalUser.isPresent()) {
-                    UI.getCurrent().getSession().setAttribute("user",optionalUser.get());
+                    VaadinSession.getCurrent().getSession().setAttribute("user",optionalUser.get());
                     UI.getCurrent().navigate("user-page");
                     loginTF.clear();
                     passwordPF.clear();

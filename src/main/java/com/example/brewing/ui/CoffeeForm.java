@@ -13,7 +13,10 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -25,13 +28,13 @@ import java.util.stream.IntStream;
 @Route("coffee-form")
 @UIScope
 @Theme(variant = Lumo.DARK)
-public class CoffeeForm extends VerticalLayout {
+public class CoffeeForm extends VerticalLayout implements BeforeEnterObserver {
     @Autowired
     CoffeeRepository coffeeRepository;
     User activeUser;
 
     public CoffeeForm(){
-        this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
+        this.activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
     }
 
     private TextField roasterTF = new TextField("coffee roaster");
@@ -62,6 +65,10 @@ public class CoffeeForm extends VerticalLayout {
         });
         backButton.addClickListener(click -> UI.getCurrent().navigate("user-page"));
         add(backButton,roasterTF,originTF,roastLevelSelect,roastDate,saveButton);
+    }
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        this.activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
     }
 }

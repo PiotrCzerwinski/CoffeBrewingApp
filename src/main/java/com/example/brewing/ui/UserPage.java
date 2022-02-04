@@ -10,7 +10,9 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -37,7 +39,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
 
     User activeUser;
     public UserPage(){
-        this.activeUser = (User) UI.getCurrent().getSession().getAttribute("user");
+        this.activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
     }
 
     Grid<Brewer> brewerGrid = new Grid<>(Brewer.class);
@@ -45,6 +47,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     Grid<Grinder> grinderGrid = new Grid<>(Grinder.class);
     Grid<Coffee> coffeeGrid = new Grid<>(Coffee.class);
 
+    HorizontalLayout headerHL = new HorizontalLayout();
     HorizontalLayout firstHl = new HorizontalLayout();
     HorizontalLayout secondHl = new HorizontalLayout();
 
@@ -62,6 +65,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     VerticalLayout coffeeVL;
     HorizontalLayout coffeeButtonHL;
 
+    Button logoutButton = new Button("Logout");
     Button addBrewerButton = new Button("Add");
     Button deleteBrewerButton = new Button("Delete");
     Button addGrinderButton = new Button("Add");
@@ -77,11 +81,21 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         grindersSetup();
         recipiesSetup();
         coffeeSetup();
+        headerHL.setWidthFull();
+        headerHL.add(logoutButton);
+        logoutButton.addClickListener(click->logout());
+        headerHL.setAlignItems(Alignment.END);
         firstHl.add(brewersVL,grindersVL);
         firstHl.setWidthFull();
         secondHl.add(coffeeVL,recipesVL);
         secondHl.setWidthFull();
-        add(firstHl, secondHl);
+        add(headerHL, firstHl, secondHl);
+    }
+
+    public void logout(){
+        VaadinSession.getCurrent().getSession().setAttribute("user",null);
+        activeUser = null;
+        UI.getCurrent().navigate("");
     }
 
     public void brewersSetup(){
@@ -115,14 +129,15 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     public void recipiesSetup(){
         recipesVL = new VerticalLayout();
         recipeGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getRecipeList());
-        recipeGrid.setColumns("brewer.name","recipeText");
+        recipeGrid.setColumns("recipeName","brewer.name");
         recipesButtonHL = new HorizontalLayout();
 
         addRecipeButton.addClickListener(event -> UI.getCurrent().navigate("recipe-form"));
         deleteRecipeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
         deleteRecipeButton.addClickListener(click -> deleteRecipe());
         recipeGrid.addItemDoubleClickListener(click ->{
-            UI.getCurrent().getSession().setAttribute("recipe", click.getItem());
+            VaadinSession.getCurrent().getSession().setAttribute("recipe", click.getItem());
+
             UI.getCurrent().navigate("recipe-view");
         });
 
@@ -143,14 +158,6 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         coffeeButtonHL.add(addCoffeeButton,deleteCoffeeButton);
         coffeeVL.add(coffeeLabel,coffeeGrid,coffeeButtonHL);
     }
-
-    /*@Override
-    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
-        brewerGrid.setItems(brewerRepository.findAll());
-        recipeGrid.setItems(recipeRepository.findAll());
-        grinderGrid.setItems(grinderRepository.findAll());
-        coffeeGrid.setItems(coffeeRepository.findAll());
-    }*/
 
     public void deleteBrewer(){
         brewerGrid.getSelectionModel().getFirstSelectedItem()
