@@ -66,6 +66,7 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
     HorizontalLayout coffeeButtonHL;
 
     Button logoutButton = new Button("Logout");
+    Button searchButton = new Button("Search recipies");
     Button addBrewerButton = new Button("Add");
     Button deleteBrewerButton = new Button("Delete");
     Button addGrinderButton = new Button("Add");
@@ -82,8 +83,9 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         recipiesSetup();
         coffeeSetup();
         headerHL.setWidthFull();
-        headerHL.add(logoutButton);
+        headerHL.add(logoutButton,searchButton);
         logoutButton.addClickListener(click->logout());
+        searchButton.addClickListener(click->UI.getCurrent().navigate("recipe-search"));
         headerHL.setAlignItems(Alignment.END);
         firstHl.add(brewersVL,grindersVL);
         firstHl.setWidthFull();

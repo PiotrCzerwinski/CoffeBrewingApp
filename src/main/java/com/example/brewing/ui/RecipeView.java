@@ -8,6 +8,7 @@ import com.example.brewing.repositories.ReviewRepository;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
@@ -44,6 +45,7 @@ public class RecipeView extends VerticalLayout implements BeforeEnterObserver {
     private Button backButton = new Button("Go back");
     private H1 recipeName;
     private H2 comments;
+    private Grid<Review> reviewsGrid;
     private Paragraph recipeTextP;
 
 
@@ -51,28 +53,23 @@ public class RecipeView extends VerticalLayout implements BeforeEnterObserver {
     public void init(){
         setSizeFull();
         setAlignItems(Alignment.CENTER);
-        backButton.addClickListener(click -> UI.getCurrent().navigate("user-page"));
+        backButton.addClickListener(click -> UI.getCurrent().navigate("recipe-search"));
         recipeName = new H1(activeRecipe.getRecipeName());
         recipeTextP = new Paragraph(activeRecipe.getRecipeText());
         comments = new H2("Reviews:");
 
-        add(backButton,recipeName,recipeTextP,comments);
+        reviewsGrid = new Grid<>();
+        reviewsGrid.addColumn(Review::getComment).setHeader("Review");
+        reviewsGrid.addColumn(Review::getRating).setHeader("Rating");
+        reviewsGrid.addColumn(a -> a.getAuthor().getLogin()).setHeader("Author");
+        reviewsGrid.setItems(activeRecipe.getReviews());
 
-        if(!recipeRepository.findById(activeRecipe.getId()).get().getReviews().isEmpty()){
-            Recipe recipe = recipeRepository.findById(activeRecipe.getId()).get();
-            List<Review> reviewsFromRepo = recipe.getReviews();
-            reviewsFromRepo.forEach(r ->{
-                Text t = new Text(r.getComment());
-                add(t);
-            });
-        } else {
-            Text t = new Text("No reviews for this recipe so far.");
-            add(t);
-        }
+        add(backButton,recipeName,recipeTextP,comments,reviewsGrid);
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         this.activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
+        this.activeRecipe = (Recipe) VaadinSession.getCurrent().getSession().getAttribute("recipe");
     }
 }
