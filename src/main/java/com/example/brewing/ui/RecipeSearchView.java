@@ -91,6 +91,11 @@ public class RecipeSearchView extends VerticalLayout implements BeforeEnterObser
         @Override
         public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
             this.activeUser = (User) VaadinSession.getCurrent().getSession().getAttribute("user");
+            recipeGrid.setItems(
+                    recipeRepository.findAll().stream()
+                            .filter(o -> !o.getRecipeAuthor().getId().equals(activeUser.getId()))
+                            .collect(Collectors.toList())
+            );
         }
 
         private void createFiltersHeader(){

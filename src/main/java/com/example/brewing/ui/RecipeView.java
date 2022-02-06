@@ -12,7 +12,11 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
@@ -24,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Route("recipe-view")
@@ -48,6 +53,10 @@ public class RecipeView extends VerticalLayout implements BeforeEnterObserver {
     private Grid<Review> reviewsGrid;
     private Paragraph recipeTextP;
 
+    private HorizontalLayout commentHl;
+    private TextArea comment;
+    private Select<Long> rating;
+
 
     @PostConstruct
     public void init(){
@@ -63,8 +72,33 @@ public class RecipeView extends VerticalLayout implements BeforeEnterObserver {
         reviewsGrid.addColumn(Review::getRating).setHeader("Rating");
         reviewsGrid.addColumn(a -> a.getAuthor().getLogin()).setHeader("Author");
         reviewsGrid.setItems(activeRecipe.getReviews());
+        createCommentHl();
+        add(backButton,recipeName,recipeTextP,comments,commentHl,reviewsGrid);
+    }
 
-        add(backButton,recipeName,recipeTextP,comments,reviewsGrid);
+    private void createCommentHl(){
+        commentHl = new HorizontalLayout();
+        comment = new TextArea("Review");
+        rating = new Select<>();
+        rating.setItems(List.of(1L,2L,3L,4L,5L));
+        rating.setLabel("Your rating");
+        Button postButton = new Button("Post");
+        postButton.addClickListener(click -> postReview());
+        commentHl.add(comment,rating,postButton);
+    }
+    private void postReview(){
+        if(!comment.isEmpty() && !rating.isEmpty()){
+            Review review = new Review(activeRecipe,rating.getValue(),
+                    comment.getValue(), activeUser);
+            reviewRepository.save(review);
+
+
+            activeRecipe.addReview(review);
+            recipeRepository.save(activeRecipe);
+            comment.clear();
+            rating.clear();
+            reviewsGrid.setItems(recipeRepository.findById(activeRecipe.getId()).get().getReviews());
+        }else Notification.show("Fields cannot be empty");
     }
 
     @Override
