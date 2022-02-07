@@ -165,28 +165,28 @@ public class UserPage extends VerticalLayout /*implements BeforeEnterListener*/ 
         brewerGrid.getSelectionModel().getFirstSelectedItem()
                 .ifPresent(item -> {
                     brewerRepository.deleteById(item.getId());
-                    brewerGrid.setItems(activeUser.getBrewerList());
+                    brewerGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getBrewerList());
                 });
     }
     public void deleteGrinder(){
         grinderGrid.getSelectionModel().getFirstSelectedItem()
                 .ifPresent(item -> {
                     grinderRepository.deleteById(item.getId());
-                    grinderGrid.setItems(activeUser.getGrinderList());
+                    grinderGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getGrinderList());
                 });
     }
     public void deleteCoffee(){
         coffeeGrid.getSelectionModel().getFirstSelectedItem()
                 .ifPresent(item -> {
                     coffeeRepository.deleteById(item.getId());
-                    coffeeGrid.setItems(activeUser.getCoffeeList());
+                    coffeeGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getCoffeeList());
                 });
     }
     private void deleteRecipe() {
         recipeGrid.getSelectionModel().getFirstSelectedItem()
                 .ifPresent(item -> {
                     recipeRepository.deleteById(item.getId());
-                    recipeGrid.setItems(activeUser.getRecipeList());
+                    recipeGrid.setItems(userRepository.findByLoginAndPassword(activeUser.getLogin(),activeUser.getPassword()).get().getRecipeList());
                 });
     }
 }
