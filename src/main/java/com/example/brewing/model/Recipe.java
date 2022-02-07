@@ -16,7 +16,7 @@ public class Recipe extends BaseEntity{
     @ManyToOne
     private Brewer brewer;
     private String recipeText;
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER,orphanRemoval = true)
     private List<Review> reviews;
     @ManyToOne
     private User recipeAuthor;
