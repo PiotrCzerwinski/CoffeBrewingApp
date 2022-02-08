@@ -19,10 +19,8 @@ public class Brewer extends BaseEntity{
 
     @Override
     public String toString() {
-        return "Brewer [id= "+this.getId()+
+        return "Brewer [name= "+this.getName()+
                 ", brewerType= "+this.getBrewerType().toString()+
-                ", name= "+this.getName()+
                 "]";
-
     }
 }

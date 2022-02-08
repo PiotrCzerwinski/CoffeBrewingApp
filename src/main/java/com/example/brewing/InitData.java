@@ -51,7 +51,14 @@ public class InitData {
         brewerRepository.saveAll(List.of(aeropress,v60));
 
         Recipe r1 = new Recipe("V60 recipe",v60,"v60 recipe text", new ArrayList<>(), user1);
-        Recipe r2 = new Recipe("Aeropress recipe",aeropress,"aeropress recipe text",new ArrayList<>(), user1);
+        String recipeText = "1.Add 30g of coffee into chamber.\n" +
+                "2. Add 100g of water in 15 sec. Stir for 15 sec.\n" +
+                "3. Add 70g of water.\n" +
+                "4. Add 1g of very finely ground coffee (like espresso).\n" +
+                "5. Attach filter cap, flip the AeroPress and press for 45 sec.\n" +
+                "6. Top up brew with 50g of water.\n" +
+                "7. Enjoy";
+        Recipe r2 = new Recipe("Aeropress recipe",aeropress,recipeText,new ArrayList<>(), user1);
         recipeRepository.saveAll(List.of(r1,r2));
 
         Review review = new Review(r1,5L,"Really enjoyed coffee that recipe produced",user2);
